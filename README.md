@@ -9,12 +9,29 @@ This seems to the reason for slowness (~30%). Effectively two additional files a
 `-MF <file>`              Write depfile output from -MMD, -MD, -MM, or -M to <file>
 
 1. `clang++ -O3 -mavx2 -Wall -pedantic -MD -MT example.C.o -MF example.C.o.d -o example.C.o -c example.C`
-2. `clang++ -O3 -mavx2 -Wall -pedantic -MD -MT example.C.o -MF example.C.o.d -o example.C.o -c example.C`
-3. clang++  -O3 -mavx2 -Wall -pedantic   CMakeFiles/efficient_programs.dir/example.C.o CMakeFiles/efficient_programs.dir/compare.C.o  -o efficient_programs
+2. `clang++ -O3 -mavx2 -Wall -pedantic -MD -MT compare.C.o -MF compare.C.o.d -o compare.C.o -c compare.C`
+3. `clang++  -O3 -mavx2 -Wall -pedantic   example.C.o compare.C.o  -o efficient_compare`
 
+```
+-rw-rw-r-- 1 bogdan bogdan 1000 Nov  9 13:36 compare.C.o
+-rw-rw-r-- 1 bogdan bogdan   23 Nov  9 13:36 compare.C.o.d
+-rwxrwxr-x 1 bogdan bogdan  18K Nov  9 13:36 efficient_compare
+-rw-rw-r-- 1 bogdan bogdan 7.0K Nov  9 13:33 example.C.o
+-rw-rw-r-- 1 bogdan bogdan  17K Nov  9 13:33 example.C.o.d
+```
+
+### `Sort time: 13962ms (25889223 comparisons)`
+
+---
 
 
 `clang++ -g -O3 -mavx2 -Wall -pedantic compare.C example.C -o example && ./example`
+
+### `Sort time: 9905ms (25889223 comparisons)`
+
+---
+
+
 
 `/usr/bin/clang++  -O3 -mavx2 -Wall -pedantic -g   CMakeFiles/efficient_programs.dir/example.C.o CMakeFiles/efficient_programs.dir/compare.C.o  -o efficient_programs` 
 is slower than 
