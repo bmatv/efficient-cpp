@@ -1,10 +1,18 @@
 # Some notes
-CLion calls `clang++` with `-MT/-MD/-MF` flags - a separate dependency file is created. Seems to the reason for slowness.
+CLion calls `clang++` with `-MT/-MD/-MF` flags - a separate dependency file is created. 
+This seems to the reason for slowness (~30%). Effectively two additional files are created with the flags: `compare.C.o.d` and `examples.C.o.d`
 
-`-MD`
+`-MD`                     Write a depfile containing user and system headers
+
 `-MT <value>`             Specify name of main file output in depfile
 
-`-MF`
+`-MF <file>`              Write depfile output from -MMD, -MD, -MM, or -M to <file>
+
+1. `clang++ -O3 -mavx2 -Wall -pedantic -MD -MT example.C.o -MF example.C.o.d -o example.C.o -c example.C`
+2. `clang++ -O3 -mavx2 -Wall -pedantic -MD -MT example.C.o -MF example.C.o.d -o example.C.o -c example.C`
+3. clang++  -O3 -mavx2 -Wall -pedantic   CMakeFiles/efficient_programs.dir/example.C.o CMakeFiles/efficient_programs.dir/compare.C.o  -o efficient_programs
+
+
 
 `clang++ -g -O3 -mavx2 -Wall -pedantic compare.C example.C -o example && ./example`
 
