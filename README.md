@@ -1,6 +1,5 @@
 # Some notes
-CLion calls `clang++` with `-MT/-MD/-MF` flags - a separate dependency file is created. 
-This seems to the reason for slowness (~30%). Effectively two additional files are created with the flags: `compare.C.o.d` and `examples.C.o.d`
+There are additional flags that CMake appends by default for every object file call:
 
 `-MD`                     Write a depfile containing user and system headers
 
@@ -10,32 +9,32 @@ This seems to the reason for slowness (~30%). Effectively two additional files a
 
 1. `clang++ -O3 -mavx2 -Wall -pedantic -MD -MT example.C.o -MF example.C.o.d -o example.C.o -c example.C`
 2. `clang++ -O3 -mavx2 -Wall -pedantic -MD -MT compare.C.o -MF compare.C.o.d -o compare.C.o -c compare.C`
-3. `clang++  -O3 -mavx2 -Wall -pedantic   example.C.o compare.C.o  -o efficient_compare`
+3. `clang++  -O3 -mavx2 -Wall -pedantic compare.C.o  example.C.o -o example`
 
-```
--rw-rw-r-- 1 bogdan bogdan 1000 Nov  9 13:36 compare.C.o
--rw-rw-r-- 1 bogdan bogdan   23 Nov  9 13:36 compare.C.o.d
--rwxrwxr-x 1 bogdan bogdan  18K Nov  9 13:36 efficient_compare
--rw-rw-r-- 1 bogdan bogdan 7.0K Nov  9 13:33 example.C.o
--rw-rw-r-- 1 bogdan bogdan  17K Nov  9 13:33 example.C.o.d
-```
+The order of the files in linker seems to affect the performance (~30%). 
+The example.C contains the main function and should be in the end.
+example.C and compare.C can be compiled to .o - no difference.
 
-### `Sort time: 13962ms (25889223 comparisons)`
+`clang++ -g -O3 -mavx2 -Wall -pedantic   example.C compare.C -o example && ./example`
+
+## `Sort time: 12979ms (25889223 comparisons)`
 
 ---
 
 
-`clang++ -g -O3 -mavx2 -Wall -pedantic compare.C example.C -o example && ./example`
+`clang++ -g -O3 -mavx2 -Wall -pedantic   compare.C example.C -o example && ./example`
 
-### `Sort time: 9905ms (25889223 comparisons)`
+## `Sort time: 9517ms (25889223 comparisons)`
 
 ---
 
+Exactly the same behaviour with CMake:
 
+|   Correct                                                 |       Incorrect                                         |
+|:----------------------------------------------------------|:--------------------------------------------------------|
+| `add_executable(efficient_programs compare.C example.C)`  | `add_executable(efficient_programs example.C compare.C)`|
+| Sort time: 9517ms (25889223 comparisons)                  | Sort time: 14033ms (25889223 comparisons)               |
 
-`/usr/bin/clang++  -O3 -mavx2 -Wall -pedantic -g   CMakeFiles/efficient_programs.dir/example.C.o CMakeFiles/efficient_programs.dir/compare.C.o  -o efficient_programs` 
-is slower than 
-`clang++ -g -O3 -mavx2 -Wall -pedantic CMakeFiles/efficient_programs.dir/compare.C.o CMakeFiles/efficient_programs.dir/example.C.o -o example`
 
 ### Compilation flags
 - [`-pedantic`](https://stackoverflow.com/questions/2855121/what-is-the-purpose-of-using-pedantic-in-the-gcc-g-compiler)  In absence of -pedantic, even when a specific standard is requested, GCC will still allow some extensions that are not acceptable in the C standard. Consider for example the program
