@@ -17,7 +17,7 @@ using std::minstd_rand;
 using std::unique_ptr;
 using std::vector;
 
-bool compare(const char* s1, const char* s2, unsigned int l);
+bool compare(const char* s1, const char* s2);
 
 int main() {
     constexpr unsigned int L = 1 << 24, N = 1 << 20; // Use with options A, B
@@ -40,7 +40,7 @@ int main() {
 
     size_t count = 0;
     system_clock::time_point t1 = system_clock::now();
-    std::sort(vs.begin(), vs.end(), [&](const char* a, const char* b) { ++count; return compare(a, b, L); });
+    std::sort(vs.begin(), vs.end(), [&](const char* a, const char* b) { ++count; return compare(a, b); });
     //for (unsigned int i = 0; i < N; ++i) cout << "vs[" << i << "]=" << vs[i] << endl;
     system_clock::time_point t2 = system_clock::now();
     cout << "Sort time: " << duration_cast<milliseconds>(t2 - t1).count() << "ms (" << count << " comparisons)" << endl;
