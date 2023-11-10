@@ -59,3 +59,47 @@ Exactly the same behaviour with CMake:
     pedantic_test.c:2:9: warning: ISO C forbids zero-size array ‘zero_size_array’ [-Wpedantic]
     int zero_size_array[0];
     ```
+
+## Profiling
+
+In order to run profiling one needs to compile with -lprofiler
+
+`clang++-11 -g -O3 -mavx2 -Wall -pedantic   compare.C example.C -lprofiler  -o efficient_compare`
+
+The profiler lib is available after the installation of  **libgoogle-perftools-dev** 
+```
+$ CPUPROFILE=prof.data ./efficient_compare 
+Sort time: 9771ms (25889043 comparisons)
+PROFILE: interrupts/evictions/bytes = 978/293/28696
+```
+The profile data is collected in the file `prof.data`, as given by the `CPUPROFILE` environment variable.
+
+`google-pprof --text ./efficient_compare prof.data` 
+```bash
+Using local file ./efficient_compare.
+Using local file prof.data.
+/usr/bin/addr2line: DWARF error: section .debug_info is larger than its filesize! (0x93ef57 vs 0x530f28)
+Total: 978 samples
+     961  98.3%  98.3%      961  98.3% compare
+       5   0.5%  98.8%      191  19.5% std::__unguarded_linear_insert (inline)
+       4   0.4%  99.2%      783  80.1% __gnu_cxx::__ops::_Iter_comp_iter::operator (inline)
+       3   0.3%  99.5%      964  98.6% operator (inline)
+       2   0.2%  99.7%        2   0.2% std::__introsort_loop (inline)
+       1   0.1%  99.8%      186  19.0% __gnu_cxx::__ops::_Val_comp_iter::operator (inline)
+       1   0.1%  99.9%        1   0.1% __munmap
+       1   0.1% 100.0%      773  79.0% std::__unguarded_partition (inline)
+       0   0.0% 100.0%        1   0.1% _ZNKSt14default_deleteIA_cEclIcEENSt9enable_ifIXsr14is_convertibleIPA_T_PS0_EE5valueEvE4typeEPS4_ (inline)
+       0   0.0% 100.0%      978 100.0% __libc_start_main
+       0   0.0% 100.0%      978 100.0% _start
+       0   0.0% 100.0%      978 100.0% main
+       0   0.0% 100.0%      191  19.5% std::__final_insertion_sort (inline)
+       0   0.0% 100.0%      786  80.4% std::__introsort_loop
+       0   0.0% 100.0%       12   1.2% std::__move_median_to_first (inline)
+       0   0.0% 100.0%      977  99.9% std::__sort (inline)
+       0   0.0% 100.0%      191  19.5% std::__unguarded_insertion_sort (inline)
+       0   0.0% 100.0%      786  80.4% std::__unguarded_partition_pivot (inline)
+       0   0.0% 100.0%        1   0.1% std::iter_swap (inline)
+       0   0.0% 100.0%      977  99.9% std::sort (inline)
+       0   0.0% 100.0%        1   0.1% ~unique_ptr (inline)
+
+```
