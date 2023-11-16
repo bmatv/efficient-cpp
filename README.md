@@ -103,3 +103,10 @@ Total: 978 samples
        0   0.0% 100.0%        1   0.1% ~unique_ptr (inline)
 
 ```
+
+`using std::cout, std::endl;` is a c++17 feature, need to split for portability
+
+
+[Here is additional docu](EXTRA.md)
+
+[Measuring performance is here](PERFORMANCE_MEASUREMENT.md)
