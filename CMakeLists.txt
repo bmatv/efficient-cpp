@@ -20,3 +20,8 @@ add_executable(clocks clocks.cpp)
 
 add_executable(threading threading.cpp)
 
+add_executable(superscalar 01_superscalar.C)
+
+find_package(benchmark REQUIRED)
+
+target_link_libraries(superscalar benchmark::benchmark)
