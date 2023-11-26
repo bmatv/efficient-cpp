@@ -144,7 +144,7 @@ Resource pressure by instruction:
 
 
 Timeline view:
-                    0123456789          0123456789          01
+                    0123456789          0123456789          01 <= THESE ARE CYCLES!!! 52 in total
 Index     0123456789          0123456789          0123456789  
 
 [0,0]     DeeeER    .    .    .    .    .    .    .    .    ..   mov	rcx, qword ptr [r13 + 8*rax]
@@ -190,4 +190,30 @@ Average Wait times (based on the timeline view):
 1.     10    12.5   11.5   0.0       imul	rcx, qword ptr [r14 + 8*rax]
 2.     10    17.8   0.0    0.0       add	qword ptr [rsp], rcx
        10    10.6   4.4    5.3       <total>
+```
+
+Addition and multiplication gives us a 53-cycle timeline (+1 cycle for twice as many compute):
+```
+Timeline view:
+                    0123456789          0123456789          012 <= 53 cycles here
+Index     0123456789          0123456789          0123456789   
+```
+
+7 different operations in the loop (excluding division) as:
+```cpp
+a1 += p1[i] + p2[i];
+a2 += p1[i] * p2[i];
+a3 += p2[i] - p1[i];
+a4 += p1[i] << 2;
+a5 += p1[i] + 1;
+a6 += p2[i] * p2[i];
+a7 += p1[i] - p2[i];
+```
+
+produces 80 cycles timeline:
+```
+Timeline view:
+0123456789          0123456789          0123456789          0123456789
+Index     0123456789          0123456789          0123456789          0123456789
+
 ```
