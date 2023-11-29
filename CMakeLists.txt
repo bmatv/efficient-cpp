@@ -22,6 +22,10 @@ add_executable(threading threading.cpp)
 
 add_executable(superscalar 01_superscalar.C)
 
+add_executable(branches branches.cpp)
+
 find_package(benchmark REQUIRED)
 
 target_link_libraries(superscalar benchmark::benchmark)
+
+target_link_libraries(branches benchmark::benchmark)
