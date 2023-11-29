@@ -217,3 +217,25 @@ Timeline view:
 Index     0123456789          0123456789          0123456789          0123456789
 
 ```
+
+
+# Dependent pipelining
+
+```cpp
+for (size_t i = 0; i < N; ++i) {
+    MCA_START;
+    s[i] = (p1[i] + p2[i]);
+    d[i] = (p1[i] - p2[i]);
+    a1[i] += s[i]*d[i];
+    MCA_END;
+}
+```
+
+```
+Benchmark                              Time             CPU   Iterations UserCounters...
+----------------------------------------------------------------------------------------
+BM_pp_add_sub_mul/4194304        4567842 ns      4567597 ns          147 items_per_second=918.274M/s
+BM_pp_add_sub_mul_dep/4194304   18304762 ns     18304074 ns           38 items_per_second=229.146M/s
+```
+
+That dependent loop could be converted to an efficient pipelined version if last dependent multiplication could use products of s and d from the previous step.
