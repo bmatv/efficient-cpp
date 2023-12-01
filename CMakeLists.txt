@@ -24,8 +24,12 @@ add_executable(superscalar 01_superscalar.C)
 
 add_executable(branches branches.cpp)
 
+add_executable(clamp_test branch_clamp.cpp)
+
 find_package(benchmark REQUIRED)
 
 target_link_libraries(superscalar benchmark::benchmark)
 
 target_link_libraries(branches benchmark::benchmark)
+
+target_link_libraries(clamp_test benchmark::benchmark)
