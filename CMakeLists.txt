@@ -33,3 +33,5 @@ target_link_libraries(superscalar benchmark::benchmark)
 target_link_libraries(branches benchmark::benchmark)
 
 target_link_libraries(clamp_test benchmark::benchmark)
+add_executable(avx_test avx_test.cpp)
+add_executable(find_sum_elements cmake-build-debug/find_sum_elements.cpp)
