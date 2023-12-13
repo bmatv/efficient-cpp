@@ -4,6 +4,8 @@
 #include "benchmark/benchmark.h"
 #include <algorithm>
 #include <iostream>
+#include <immintrin.h>
+#include <smmintrin.h>
 
 void BM_branch_clamp(benchmark::State& state){
     /*Performance is better because the predictor can actually work now, no ideal though
@@ -110,6 +112,13 @@ void BM_branch_clamp_branchless(benchmark::State& state){
     for(size_t i=0;i<N;++i){
         v1[i] = rand()%256;
     }
+
+    __m128i ma_l = _mm_load_si128((__m128i*) v1.data());
+//    _mm_min_epi8()
+    //    _mm256_cvtepi8_epi16
+//    _mm_min_epi16()
+//    extern _mm256
+//    _mm_min_epu8()
     unsigned char* c1 = v1.data();
     unsigned char bound = 128;
     for (auto _:state){
@@ -123,6 +132,28 @@ void BM_branch_clamp_branchless(benchmark::State& state){
     }
     state.SetItemsProcessed(N*state.iterations());
 }
+
+int sumup_char_arrays(char *A, char *B, int size) {
+    assert (size % 32 == 0);
+    int sum = 0;
+    __m256i sum_tmp;
+    for (int i = 0; i < size; i += 32) {
+        __m256i ma_l = _mm256_cvtepi8_epi16(_mm_load_si128((__m128i*)A));
+        __m256i ma_h = _mm256_cvtepi8_epi16(_mm_load_si128((__m128i*)(A+16)));
+        __m256i mb_l = _mm256_cvtepi8_epi16(_mm_load_si128((__m128i*)B));
+        __m256i mb_h = _mm256_cvtepi8_epi16(_mm_load_si128((__m128i*)(B+16)));
+        __m256i mc = _mm256_madd_epi16(ma_l, mb_l);
+        mc = _mm256_add_epi32(mc, _mm256_madd_epi16(ma_h, mb_h));
+        sum_tmp = _mm256_add_epi32(mc, sum_tmp);
+        //sum += A[i]*B[i];
+    }
+    sum_tmp = _mm256_add_epi32(sum_tmp, _mm256_permute2x128_si256(sum_tmp, sum_tmp, 0x81));
+    sum_tmp = _mm256_add_epi32(sum_tmp, _mm256_srli_si256(sum_tmp, 8));
+    sum_tmp = _mm256_add_epi32(sum_tmp, _mm256_srli_si256(sum_tmp, 4));
+    sum = _mm256_extract_epi32(sum_tmp, 0);
+    return sum;
+}
+
 
 BENCHMARK(BM_branch_clamp)->Arg(1<<22); // still faster than lookup - need to check assembly
 BENCHMARK(BM_branch_clamp_LUT)->Arg(1<<22);
