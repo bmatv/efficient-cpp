@@ -47,9 +47,9 @@ void Rational::reduce() {
     n_/=divisor;
 }
 
-Rational::Rational(long n, long d) {
-    n_ = n;
-    d_ = d;
+Rational::Rational(long n_, long d_) {
+    this->n_ = n_;
+    this->d_ = d_;
 
     reduce();
 }
