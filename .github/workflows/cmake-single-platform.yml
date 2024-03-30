@@ -22,8 +22,8 @@ jobs:
     steps:
     # - uses: actions/checkout@v3
     - uses: benchmark-action/github-action-benchmark@v1
-      # with:
-      #     tool: 'googlecpp'
+      with:
+          tool: 'googlecpp'
       #     output-file-path: benchmark_result.json
 
     - name: Configure CMake
