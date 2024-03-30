@@ -28,6 +28,8 @@ jobs:
     #   with:
     #       tool: 'googlecpp'
     #       output-file-path: benchmark_result.json
+    - name: What's the cwd
+      run: pwd
     - name: Directory listing
       run: ls -la
       
