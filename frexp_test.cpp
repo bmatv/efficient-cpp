@@ -1,23 +1,22 @@
-#include <cmath>
 #include <iostream>
-#include <limits>
+#include <bitset>
+#include <vector>
+#include <iomanip>
+
+float genRandFloat(){
+    return rand()/float(RAND_MAX);
+//    return rand()/float(RAND_MAX)*24.f+1.f
+}
 
 int main()
 {
-    double f = 123.45;
-    std::cout << "Given the number " << f << " or " << std::hexfloat
-              << f << std::defaultfloat << " in hex,\n";
 
-    double f3;
-    double f2 = std::modf(f, &f3);
-    std::cout << "modf() makes " << f3 << " + " << f2 << '\n';
+    std::vector<float>v (10);
 
-    int i;
-    f2 = std::frexp(f, &i);
-    std::cout << "frexp() makes " << f2 << " * 2^" << i << '\n';
+    std::generate(v.begin(),v.end(),genRandFloat);
 
-    i = std::ilogb(f);
-    std::cout << "logb()/ilogb() make " << f / std::scalbn(1.0, i)
-              << " * " << std::numeric_limits<double>::radix
-              << "^" << std::ilogb(f) << '\n';
+    for (auto& i:v){
+        std::cout << std::setw(10) << i << ": "<< std::bitset<32>(*reinterpret_cast<int*>(&i)) << '\n';
+    }
+
 }
