@@ -9,7 +9,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 
-set(CMAKE_CXX_FLAGS "-g -O3 -mavx2 -Wall -pedantic -pthread")
+set(CMAKE_CXX_FLAGS "-g -O3 -mavx2 -Wall -pedantic -pthread") # -O3
+# TODO CMake should check if AVX2 is available and enable the flag automatically
 
 #set(CMAKE_CXX_FLAGS_DEBUG "-g")
 #set(CMAKE_CXX_FLAGS_RELEASE "-O3 -mavx2 -Wall -pedantic")
@@ -35,5 +36,5 @@ target_link_libraries(branches benchmark::benchmark)
 target_link_libraries(clamp_test benchmark::benchmark)
 add_executable(avx_test avx_test.cpp)
 add_executable(find_sum_elements find_sum_elements.cpp)
-add_executable(frexp_test frexp_test.cpp)
+add_executable(bitcount bitcount.C)
 add_executable(rational rational.cpp)
