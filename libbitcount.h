@@ -6,8 +6,11 @@
 #define EFFICIENT_CPP_LIBBITCOUNT_H
 
 #include <cstdint>
+#include <vector>
 
 void bitcount_array(uint8_t* array, int array_size, int* C);
+
+void bitPairCount(const std::vector<uint8_t>& vecA, const std::vector<uint8_t> &vecB, std::vector<std::vector<int>>& C);
 
 inline void bitcount_array_inlined(uint8_t* array, int array_size, int* C) {
     int8_t mask;
