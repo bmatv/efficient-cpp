@@ -2,75 +2,33 @@
 // Created by bogdan on 4/04/24.
 //
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 #include "libbitcount.h"
 
 #include <iomanip>
 
 #include <vector>
 
-//void bitcount_array(uint8_t* array, int array_size, int* C) {
-//    int8_t mask;
-//    for (int j = 0; j < array_size; ++j) {
-//        mask = 1;
-//        for (int i = 0; i < 8; ++i) {
-//            C[i] += ((array[j] & mask) >> i);
-//            mask <<= 1;
-//        }
-//    }
-//}
 
 int main(){
-//    uint8_t array[] {0b10001111,
-//                     0b00010111,
-//                     0b11101000,
-//                     0b10100100,
-//                     0b11101011};
-//    int C [8] {};
-//
-//    bitcount_array(array, 5, C);
-//
-//    for (int i=0;i<8;++i){
-//        std::cout << C[i] << '\n';
-//    }
-
-
-
     std::vector<uint8_t> vecA {0b10001110,
-                               0b00010110,
-                               0b11101001,
-                               0b10100101,
-                               0b11101010};
+                    0b00010110,
+                    0b11101001,
+                    0b10100101,
+                    0b11101010};
 
     std::vector<uint8_t> vecB {0b10001111,
-                               0b00010111,
-                               0b11101000,
-                               0b10100100,
-                               0b11101011};
+                    0b00010111,
+                    0b11101000,
+                    0b10100100,
+                    0b11101011};
+
 
     assert(vecA.size() == vecB.size());
 
     std::vector<std::vector<int>> C(5,std::vector<int>(4,0)); // same as {0,0,0,0}?
 
-//    int C[4]{};
-    uint8_t mask;
-
-    for(int j = 0; j<vecA.size();++j){
-        mask = 1;
-        for (int i = 0; i<8;++i){
-
-            C[j][((vecA[j] & mask) >> i) + ((vecB[j] & mask) >> i)*2] += 1;
-//            std::cout << "bit" << i << ' ' << ((vecA[j] & mask) >> i) << " and " << ((vecB[j] & mask) >> i) << " +1 to " <<
-//
-//                                                                                                                         ((vecA[j] & mask) >> i) + ((vecB[j] & mask) >> i)*2 << '\n';
-//            C[(vecA[i] & mask) >> j ]
-            mask <<=1;
-        }
-//        std::cout << "--------" << '\n';
-
-
-    }
-
+    bitPairCount(vecA,vecB,C);
 
     std::cout << " 00 01 10 11\n -----------\n";
     for(auto vec:C){
