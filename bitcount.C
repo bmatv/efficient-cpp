@@ -11,25 +11,38 @@
 
 
 int main(){
-    std::vector<uint8_t> vecA {0b10001110,
-                    0b00010110,
+    std::vector<uint8_t> vecA {0b11111111,
+                    0b00010111,
                     0b11101001,
                     0b10100101,
-                    0b11101010};
+                    0b11101011};
 
-    std::vector<uint8_t> vecB {0b10001111,
+    std::vector<uint8_t> vecB {0b11111111,
                     0b00010111,
-                    0b11101000,
-                    0b10100100,
+                    0b11101001,
+                    0b10100101,
                     0b11101011};
 
 
     assert(vecA.size() == vecB.size());
 
-    std::vector<std::vector<int>> C(5,std::vector<int>(4,0)); // same as {0,0,0,0}?
+    int nbits = 8;
+    std::vector<std::vector<int>> C(nbits,std::vector<int>(4,0)); //should be [nbits,4]
 
-    bitPairCount(vecA,vecB,C);
+//    bitPairCount(vecA,vecB,C);
+    uint8_t mask;
+    int idxA = 0, idxB = 0;
+    for (size_t i = 0; i< vecA.size(); ++i){
+        mask = 1;
+        for (int j = 0; j< nbits; ++j){
+            idxA = (vecA[i] & mask) >> j;
+            idxB = (vecB[i] & mask) >> j;
+            C[j][idxA + idxB*2] += 1;
+            mask <<= 1;
+        }
+    }
 
+//    for each element pair in vector A and B, for each bit get +1 into one of 4 bitpair elements
     std::cout << " 00 01 10 11\n -----------\n";
     for(auto vec:C){
         for(auto num:vec){
