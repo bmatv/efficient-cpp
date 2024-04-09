@@ -51,6 +51,20 @@ int main(){
         std::cout << '\n';
     }
 
+    // having C I should be able to get P which is the addition of counts per each bit and division of the sum by total count of elements
+    std::vector<uint8_t > P(4,0.0);
+
+    for(int i = 0; i < nbits; ++i){
+        for(int j = 0; j < 4; ++j){
+            P[j] += C[i][j];
+        }
+    }
+
+    for (uint8_t element:P){
+        std::cout << "P element. SUM = " << (int)element << "|Probability = " << (double) element / (vecA.size() * nbits) << '\n';
+    }
+
+
 
 
 }
