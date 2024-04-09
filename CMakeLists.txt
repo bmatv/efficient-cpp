@@ -37,3 +37,7 @@ add_executable(avx_test avx_test.cpp)
 add_executable(find_sum_elements find_sum_elements.cpp)
 add_executable(frexp_test frexp_test.cpp)
 add_executable(rational rational.cpp)
+add_executable(flying_bird flying_bird.cpp)
+
+add_executable(dynamic_cast 02_dynamic_cast.C)
+target_link_libraries(dynamic_cast benchmark::benchmark)
