@@ -8,6 +8,23 @@
 #include "libbitcount.h"
 //#include <cstdint>
 
+void BM_reinterp_cast(benchmark::State& state){
+//    std::vector<float> vec{0.1,0.2,0.3,0.4,0.5};
+    float arr[]{0.1,0.2,0.3,0.4,0.5};
+    int* a;
+    for (auto _:state) {
+        for(int i = 0; i<5;++i){
+            a = reinterpret_cast<int*>(&arr[i]);
+
+        }
+        benchmark::DoNotOptimize(a);
+        benchmark::ClobberMemory();
+
+
+    }
+    state.SetItemsProcessed(state.iterations()*5);
+}
+
 void BM_bitcount_vec(benchmark::State& state) {
     //TODO Why is vec implementation so slow?
     std::vector<uint8_t> vec{0b10001111,0b00010111,0b11101000,0b10100100,0b11101011};
@@ -66,8 +83,9 @@ void BM_bitcount_array_fn(benchmark::State& state) {
                        0b11101011};
 
     int C [8] {};
+    int array_size = 5;
     for (auto _:state) {
-        bitcount_array(array, 5, C);
+        bitcount_array(array, array_size, C);
         benchmark::DoNotOptimize(C);
         benchmark::ClobberMemory();
 
@@ -211,6 +229,8 @@ void BM_bitpaircount_array1d(benchmark::State& state) {
     state.SetItemsProcessed(state.iterations());
 }
 
+
+BENCHMARK(BM_reinterp_cast)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_vec)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_array)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_array1d)->Arg(1 << 22);
