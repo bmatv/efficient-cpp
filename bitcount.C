@@ -4,27 +4,53 @@
 #include <iostream>
 #include <cassert>
 #include "libbitcount.h"
-
+#include <bitset>
 #include <iomanip>
 
 #include <vector>
 
+float genRandFloat(){
+    return rand()/float(RAND_MAX); // outputs 0..1 values
+//    return rand()/float(RAND_MAX)*24.f+1.f
+}
 
 int main(){
+    float arr[]{0.1,0.2,0.3,0.4,0.5};
+
+    for(int i = 0; i<5;++i) {
+        int* a = reinterpret_cast<int*>(&arr[i]);
+        std::cout << "a equals to " << a << '\n';
+    }
+
+
+
     std::vector<uint8_t> vecA {0b11111111,
                     0b00010111,
                     0b11101001,
                     0b10100101,
                     0b11101011};
 
-    std::vector<uint8_t> vecB {0b11111111,
-                    0b00010111,
-                    0b11101001,
-                    0b10100101,
-                    0b11101011};
+    std::vector<float>v(10);
+    std::generate(v.begin(), v.end(), genRandFloat);
+
+    for(float element:v){
+        std::cout << element << ' ';
+    }
+    std::cout << '\n';
+
+    // generate array A of 1M length
+    // TODO check how fast is reinterpret_cast
+//    auto randNum = genRandFloat();
+//    std::cout << "some random number: " << randNum << " bits: "<< std::bitset<32>(*reinterpret_cast<int32_t*>(&randNum)) << '\n';
+
+//    std::vector<uint8_t> vecB {0b11111111,
+//                    0b00010111,
+//                    0b11101001,
+//                    0b10100101,
+//                    0b11101011};
 
 
-    assert(vecA.size() == vecB.size());
+//    assert(vecA.size() == vecB.size());
 
     int nbits = 8;
     std::vector<std::vector<int>> C(nbits,std::vector<int>(4,0)); //should be [nbits,4]
@@ -32,11 +58,13 @@ int main(){
 //    bitPairCount(vecA,vecB,C);
     uint8_t mask;
     int idxA = 0, idxB = 0;
-    for (size_t i = 0; i< vecA.size(); ++i){
+//    for (size_t i = 0; i< vecA.size(); ++i){
+    for (size_t i = 0; i< vecA.size()-1; ++i){
         mask = 1;
         for (int j = 0; j< nbits; ++j){
             idxA = (vecA[i] & mask) >> j;
-            idxB = (vecB[i] & mask) >> j;
+//            idxB = (vecB[i] & mask) >> j;
+            idxB = (vecA[i+1] & mask) >> j;
             C[j][idxA + idxB*2] += 1;
             mask <<= 1;
         }
@@ -69,10 +97,7 @@ int main(){
 
 }
 
-//float genRandFloat(){
-//    return rand()/float(RAND_MAX);
-////    return rand()/float(RAND_MAX)*24.f+1.f
-//}
+
 
 //std::vector<int> bitcount(std::vector<uint8_t> vec);
 
