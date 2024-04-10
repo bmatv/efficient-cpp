@@ -3,7 +3,7 @@
 #include "libbitcount.h"
 #include <cassert>
 
-void bitcount_array(uint8_t* array, int array_size, int* C) {
+void bitcount_array(uint8_t* array, int& array_size, int* C) {
     int8_t mask;
     for (int j = 0; j < array_size; ++j) {
         mask = 1;
