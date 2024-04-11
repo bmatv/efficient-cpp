@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <vector>
 
-void bitcount_array(uint8_t* array, int array_size, int* C);
+void bitcount_array(uint8_t* array, int& array_size, int* C);
 
 void bitPairCount(const std::vector<uint8_t>& vecA, const std::vector<uint8_t> &vecB, std::vector<std::vector<int>>& C);
 
