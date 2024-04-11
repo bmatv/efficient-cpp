@@ -8,6 +8,40 @@
 #include "libbitcount.h"
 //#include <cstdint>
 
+void BM_bitpaircount_vec_float(benchmark::State& state){
+
+    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483};
+    const int nbits = sizeof(vec[0]) * 8; // should be 32 and can be unsigned if that makes sense
+    std::vector<std::vector<int>> C(nbits,std::vector<int>(4,0)); //should be [nbits,4], could be a basic 1D array
+
+    int mask;
+    int idxA = 0, idxB = 0;
+    int A, B;
+    size_t total = vec.size()-1;
+
+    for (auto _:state) {
+
+    for (size_t i = 0; i< total; ++i){
+        mask = 1;
+        A = reinterpret_cast<int&>(vec[i]);
+        B = reinterpret_cast<int&>(vec[i+1]);
+
+        for (int j = 0; j< nbits; ++j){
+            idxA = (A & mask) >> j;
+            idxB = (B & mask) >> j;
+            C[j][idxA + idxB*2] += 1; // OK but a bit different order which is fine
+            mask <<= 1;
+        }
+    }
+
+        benchmark::DoNotOptimize(C);
+        benchmark::ClobberMemory();
+
+    }
+    state.SetItemsProcessed(state.iterations());
+}
+
+
 void BM_reinterp_cast(benchmark::State& state){
 //    std::vector<float> vec{0.1,0.2,0.3,0.4,0.5};
     float arr[]{0.1,0.2,0.3,0.4,0.5};
@@ -229,8 +263,9 @@ void BM_bitpaircount_array1d(benchmark::State& state) {
     state.SetItemsProcessed(state.iterations());
 }
 
-
+BENCHMARK(BM_bitpaircount_vec_float)->Arg(1 << 22);
 BENCHMARK(BM_reinterp_cast)->Arg(1 << 22);
+BENCHMARK(BM_reinterp_cast_single)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_vec)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_array)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_array1d)->Arg(1 << 22);
