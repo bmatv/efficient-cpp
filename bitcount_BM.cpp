@@ -45,10 +45,10 @@ void BM_bitpaircount_vec_float(benchmark::State& state){
 void BM_reinterp_cast(benchmark::State& state){
 //    std::vector<float> vec{0.1,0.2,0.3,0.4,0.5};
     float arr[]{0.1,0.2,0.3,0.4,0.5};
-    int* a;
+    int a;
     for (auto _:state) {
         for(int i = 0; i<5;++i){
-            a = reinterpret_cast<int*>(&arr[i]);
+            a = *reinterpret_cast<int*>(arr+i);
 
         }
         benchmark::DoNotOptimize(a);
@@ -57,6 +57,21 @@ void BM_reinterp_cast(benchmark::State& state){
 
     }
     state.SetItemsProcessed(state.iterations()*5);
+}
+
+void BM_reinterp_cast_single(benchmark::State& state){
+//    std::vector<float> vec{0.1,0.2,0.3,0.4,0.5};
+//    float arr[]{0.1,0.2,0.3,0.4,0.5};
+    float a = 0.1;
+    int b;
+    for (auto _:state) {
+        b = reinterpret_cast<int&>(a);
+        benchmark::DoNotOptimize(b);
+        benchmark::ClobberMemory();
+
+
+    }
+    state.SetItemsProcessed(state.iterations());
 }
 
 void BM_bitcount_vec(benchmark::State& state) {
