@@ -47,5 +47,7 @@ add_library(libbitcount libbitcount.C
         libbitcount.h)
 add_executable(bitcount bitcount.C libbitcount.C
         libbitcount.h)
+
 add_executable(bitcount_BM bitcount_BM.cpp libbitcount.C)
 target_link_libraries(bitcount_BM benchmark::benchmark)
+add_executable(reinterp reinterp.cpp)
