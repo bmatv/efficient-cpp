@@ -58,18 +58,17 @@ int main() {
 
     int c[8];
 
-    int tmp {};
-//    for (int i = 0; i<8;++i){
-//////        int* int_a = reinterpret_cast<int*>(&a[i]); // 32 bits int
-//////        std::cout << "a equals to " << int_a << '\n';
-////////        tmp = *reinterpret_cast<int*>(&a[i]);
-//////        std::cout << (tmp) << '\n';
-//        std::cout << std::setw(4)<< a[i] << ": "<< std::bitset<32>(*reinterpret_cast<int*>(&a[i])) << '\n';
-////
-//////        std::cout << a[i] << ": "<<
-//////        std::bitset<32>(*reinterpret_cast<int*>(&a[i])) << '\n';
-////
-//    }
+    for (int i = 0; i<8;++i){
+////        int* int_a = reinterpret_cast<int*>(&a[i]); // 32 bits int
+////        std::cout << "a equals to " << int_a << '\n';
+//////        tmp = *reinterpret_cast<int*>(&a[i]);
+////        std::cout << (tmp) << '\n';
+        std::cout << std::setw(8)<< a[i] << ": "<< std::bitset<32>(*reinterpret_cast<int*>(&a[i])) << '\n';
+//
+////        std::cout << a[i] << ": "<<
+////        std::bitset<32>(*reinterpret_cast<int*>(&a[i])) << '\n';
+//
+    }
 //    std::cout << '\n';
 //    for (int i = 0; i<8;++i){
 ////load in 8 copies of the same value and 8 masks, run "and" _mm256_and_ps
@@ -85,14 +84,14 @@ int main() {
 
         _mm256_storeu_si256((__m256i *) c, c8);
 
-        C[i][c[0]>>i + (c[1]>>i) *2] += 1;
-        C[i][c[1]>>i + (c[2]>>i) *2] += 1;
-        C[i][c[3]>>i + (c[4]>>i) *2] += 1;
-        C[i][c[5]>>i + (c[6]>>i) *2] += 1;
-        C[i][c[7]>>i + (c[8]>>i) *2] += 1;
+        C[i][(c[0]>>i) + (c[1]>>i) *2] += 1; // could be also (c[0]>0) + (c[1]>0)*2
+        C[i][(c[1]>>i) + (c[2]>>i) *2] += 1;
+        C[i][(c[3]>>i) + (c[4]>>i) *2] += 1;
+        C[i][(c[5]>>i) + (c[6]>>i) *2] += 1;
+        C[i][(c[7]>>i) + (c[8]>>i) *2] += 1;
 
     }
-
+    std::cout << "Printing C\n 00 01 10 11\n -----------\n";
     for(int i = 0;i<32;++i) {
         for (int j = 0; j < 4; ++j) {
             std::cout << C[i][j] << ' ';
