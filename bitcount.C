@@ -14,11 +14,23 @@ float genRandFloat(){
 //    return rand()/float(RAND_MAX)*24.f+1.f
 }
 
+
+//int* genMaskArray32(){
+//    int maskArray[32]{};
+//    for(int i=0; i<32; ++i){
+//        maskArray[i] = (static_cast<int>(1) << i);
+//    }
+//    return maskArray;
+//}
+
 int main(){
 //    std::vector<float>vec(10);
 //    std::generate(vec.begin(), vec.end(), genRandFloat);
 //    assert(vecA.size() == vecB.size());
-    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483};
+//    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483};
+
+    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483, 0.9274405,0.5442584,0.43579006};
+    std::cout << "sizeof (vec) = " << vec[0] << '\n';
 
     for(float element:vec){
         std::cout << element << ' ';
@@ -27,35 +39,46 @@ int main(){
 
     const int nbits = sizeof(vec[0]) * 8; // should be 32 and can be unsigned if that makes sense
     std::vector<std::vector<int>> C(nbits,std::vector<int>(4,0)); //should be [nbits,4], could be a basic 1D array
-
+//    std::vector<std::vector<int>> C_fast(nbits,std::vector<int>(4,0)); //should be [nbits,4], could be a basic 1D array
 //    bitPairCount(vecA,vecB,C);
-    int mask;
+
+    int maskArray[32]{};
+    for(int i=0; i<32; ++i) {
+        maskArray[i] = (static_cast<int>(1) << i);
+    }
+
     int idxA = 0, idxB = 0;
     int A, B;
     size_t total = vec.size()-1;
 
+//    for (int j = 0; j< nbits; ++j){
+//        for (size_t i = 0; i< vec.size()-1; ++i){
+//            // collect 0 bits of each number into one long bitstream, create two bitstreams by chopping the end and the head
+//            // do the logic manipulation with popcount to compute quanities of 00, 01, 10, 11.
+//            // involves lots of jumping thus might not be that efficient
+//        }
+//    }
+
     for (size_t i = 0; i< vec.size()-1; ++i){
-        mask = 1;
         A = *reinterpret_cast<int*>(&vec[i]);
         B = *reinterpret_cast<int*>(&vec[i+1]);
 
         for (int j = 0; j< nbits; ++j){
-            idxA = (A & mask) >> j;
-            idxB = (B & mask) >> j;
+            idxA = (A & maskArray[j]) >> j;
+            idxB = (B & maskArray[j]) >> j;
             C[j][idxA + idxB*2] += 1; // OK but a bit different order which is fine
-            mask <<= 1;
         }
     }
 
 //    for each element pair in vector A and B, for each bit get +1 into one of 4 bitpair elements
 
-//    std::cout << "Printing C\n 00 01 10 11\n -----------\n";
-//    for(auto vec:C){
-//        for(auto num:vec){
-//            std::cout << std::setw(3)<< num;
-//        }
-//        std::cout << '\n';
-//    }
+    std::cout << "Printing C\n 00 01 10 11\n -----------\n";
+    for(auto vec:C){
+        for(auto num:vec){
+            std::cout << std::setw(3)<< num;
+        }
+        std::cout << '\n';
+    }
 
     std::vector<std::vector<double> > P (nbits, std::vector<double>(4,0.0));
 //    std::vector<double > P(4,0.0);
