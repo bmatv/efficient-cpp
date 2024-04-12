@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 
-set(CMAKE_CXX_FLAGS "-g -O3 -mavx2 -Wall -pedantic -pthread")
+set(CMAKE_CXX_FLAGS "-g -march=native -Wall -pedantic -pthread")
 
 #set(CMAKE_CXX_FLAGS_DEBUG "-g")
 #set(CMAKE_CXX_FLAGS_RELEASE "-O3 -mavx2 -Wall -pedantic")
@@ -51,3 +51,4 @@ add_executable(bitcount bitcount.C libbitcount.C
 add_executable(bitcount_BM bitcount_BM.cpp libbitcount.C)
 target_link_libraries(bitcount_BM benchmark::benchmark)
 add_executable(reinterp reinterp.cpp)
+add_executable(bitcount_avx bitcount_avx.cpp)
