@@ -11,26 +11,28 @@
 void BM_bitpaircount_vec_float(benchmark::State& state){
 
     std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483};
+    size_t total = vec.size()-1;
     const int nbits = sizeof(vec[0]) * 8; // should be 32 and can be unsigned if that makes sense
-    std::vector<std::vector<int>> C(nbits,std::vector<int>(4,0)); //should be [nbits,4], could be a basic 1D array
+//    std::vector<std::vector<int>> C(nbits,std::vector<int>(4,0)); //should be [nbits,4], could be a basic 1D array
+    int C[nbits][4]{};
 
-    int mask;
+    int maskArray[32]{};
+    for(int i=0; i<32; ++i) {maskArray[i] = (static_cast<int>(1) << i);}
+
     int idxA = 0, idxB = 0;
     int A, B;
-    size_t total = vec.size()-1;
+
 
     for (auto _:state) {
-
+    // could be easily paralleled
     for (size_t i = 0; i< total; ++i){
-        mask = 1;
         A = reinterpret_cast<int&>(vec[i]);
         B = reinterpret_cast<int&>(vec[i+1]);
 
         for (int j = 0; j< nbits; ++j){
-            idxA = (A & mask) >> j;
-            idxB = (B & mask) >> j;
+            idxA = (A & maskArray[j]) >> j;
+            idxB = (B & maskArray[j]) >> j;
             C[j][idxA + idxB*2] += 1; // OK but a bit different order which is fine
-            mask <<= 1;
         }
     }
 
@@ -45,10 +47,10 @@ void BM_bitpaircount_vec_float(benchmark::State& state){
 void BM_reinterp_cast(benchmark::State& state){
 //    std::vector<float> vec{0.1,0.2,0.3,0.4,0.5};
     float arr[]{0.1,0.2,0.3,0.4,0.5};
-    int a;
+    int *a;
     for (auto _:state) {
         for(int i = 0; i<5;++i){
-            a = *reinterpret_cast<int*>(arr+i);
+            a = reinterpret_cast<int*>(arr+i);
 
         }
         benchmark::DoNotOptimize(a);
@@ -253,7 +255,7 @@ void BM_bitpaircount_array1d(benchmark::State& state) {
 
 
 //    assert(vecA.size() == vecB.size());
-    int C[5*4] {0,0,0,0,
+    int C[8*4] {0,0,0,0,
                 0,0,0,0,
                 0,0,0,0,
                 0,0,0,0,
@@ -268,7 +270,7 @@ void BM_bitpaircount_array1d(benchmark::State& state) {
 //                idx_a = (vecA[j] & mask) >> i;
 //                idx_b = (vecB[j] & mask) >> i;
 //                C[4*j + idx_a + idx_b*2] += 1;
-                C[4*j + ((vecA[j] & mask) >> i) + ((vecB[j] & mask) >> i)*2] ++;
+                C[i*4 + ((vecA[j] & mask) >> i) + ((vecB[j] & mask) >> i)*2] ++;
                 mask <<=1;
             }
         }
@@ -279,14 +281,14 @@ void BM_bitpaircount_array1d(benchmark::State& state) {
 }
 
 BENCHMARK(BM_bitpaircount_vec_float)->Arg(1 << 22);
-BENCHMARK(BM_reinterp_cast)->Arg(1 << 22);
-BENCHMARK(BM_reinterp_cast_single)->Arg(1 << 22);
+//BENCHMARK(BM_reinterp_cast)->Arg(1 << 22);
+//BENCHMARK(BM_reinterp_cast_single)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_vec)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_array)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_array1d)->Arg(1 << 22);
-BENCHMARK(BM_bitcount_array)->Arg(1 << 22);
-BENCHMARK(BM_bitcount_array_fn)->Arg(1 << 22);
-BENCHMARK(BM_bitcount_array_fn_inline)->Arg(1 << 22);
-BENCHMARK(BM_bitcount_vec)->Arg(1 << 22);
+//BENCHMARK(BM_bitcount_array)->Arg(1 << 22);
+//BENCHMARK(BM_bitcount_array_fn)->Arg(1 << 22);
+//BENCHMARK(BM_bitcount_array_fn_inline)->Arg(1 << 22);
+//BENCHMARK(BM_bitcount_vec)->Arg(1 << 22);
 
 BENCHMARK_MAIN();
