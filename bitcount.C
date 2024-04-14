@@ -6,7 +6,7 @@
 #include "libbitcount.h"
 #include <bitset>
 #include <iomanip>
-#include <math.h>
+#include <cmath>
 #include <vector>
 
 float genRandFloat(){
@@ -29,7 +29,12 @@ int main(){
 //    assert(vecA.size() == vecB.size());
 //    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483};
 
-    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483, 0.9274405,0.5442584,0.43579006};
+    // have to create a long vector with ~1m of values to properly assess the AVX implementation and how to load stuff in chunks
+
+    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584,0.43579006,
+                          0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584};
+
+
     std::cout << "sizeof (vec) = " << vec[0] << '\n';
 
     for(float element:vec){

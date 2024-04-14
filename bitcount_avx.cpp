@@ -1,11 +1,17 @@
 //
 // Created by bogdan on 12/04/24.
 //
-#include <stdio.h>
 #include <iomanip>
 #include <iostream>
 #include <immintrin.h>
 #include <bitset>
+#include <vector>
+#include <algorithm>
+
+float genRandFloat(){
+    return rand()/float(RAND_MAX); // outputs 0..1 values
+//    return rand()/float(RAND_MAX)*24.f+1.f
+}
 
 int main() {
 
@@ -42,37 +48,59 @@ int main() {
                          {1073741824,1073741824,1073741824,1073741824,1073741824,1073741824,1073741824,1073741824,},
                          {-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,},};
 
-    float a[8] = {0.9274405,0.5442584,0.43579006,0.54717463,0.29385483, 0.9274405,0.5442584,0.43579006};
+
+//    float a[15]{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584,0.43579006,
+//                0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584};
+//    float a[8] = {0.9274405,0.5442584,0.43579006,0.54717463,0.29385483, 0.9274405,0.5442584,0.43579006};
+
+//    std::vector<float>a{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584,0.43579006,
+//                          0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584};
+
+    std::vector<float>a(1000);
+    std::generate(a.begin(), a.end(), genRandFloat);
+
     int c[8];
 
-    for (float & i : a){
-        std::cout << std::setw(8)<< i << ": "<< std::bitset<32>(*reinterpret_cast<int*>(&i)) << '\n';
-    }
+//    for (float & i : a){
+//        std::cout << std::setw(8)<< i << ": "<< std::bitset<32>(*reinterpret_cast<int*>(&i)) << '\n';
+//    }
 
     int C[32][4] {};
 
-    __m256 a8 = _mm256_loadu_ps(a);
-    for (int i = 0; i < 32; ++i) {
+    std::cout << "total size of vector is " << a.size() <<". Aligned size for AVX is " << a.size() - a.size() % 7 << '\n';
 
-        __m256i b8 = _mm256_loadu_si256((__m256i *) maskArray[i]); // masks
-        __m256i c8 = _mm256_castps_si256(_mm256_and_ps(a8, _mm256_castsi256_ps(b8)));
+ // total = size - (size mod 7)
+    for (int j = 1; j <= (a.size() - a.size() % 7); j+=7){
+//        std::cout << "Printing batches of values to be loaded to AVX registers\n";
+//        for (int i = 0; i<8; i++){
+//            std::cout << a[j - 1 + i] << ' ';
+////            std::cout << std::setw(8)<< i << ": "<< std::bitset<32>(*reinterpret_cast<int*>(&i)) << '\n';
+//        }
+//        std::cout << '\n';
 
-        _mm256_storeu_si256((__m256i *) c, c8);
 
-        C[i][(c[0]>0) + (c[1]>0) *2] += 1; // could be also (c[0]>0) + (c[1]>0)*2
-        C[i][(c[1]>0) + (c[2]>0) *2] += 1;
-        C[i][(c[2]>0) + (c[3]>0) *2] += 1;
-        C[i][(c[3]>0) + (c[4]>0) *2] += 1;
-        C[i][(c[4]>0) + (c[5]>0) *2] += 1;
-        C[i][(c[5]>0) + (c[6]>0) *2] += 1;
-        C[i][(c[6]>0) + (c[7]>0) *2] += 1;
+                  __m256 a8 = _mm256_loadu_ps(&a[j-1]);
+        for (int i = 0; i < 32; ++i) {
+
+            __m256i b8 = _mm256_loadu_si256((__m256i *) maskArray[i]); // masks
+            __m256i c8 = _mm256_castps_si256(_mm256_and_ps(a8, _mm256_castsi256_ps(b8)));
+
+            _mm256_storeu_si256((__m256i *) c, c8);
+
+            C[i][(c[0]>0) + (c[1]>0) *2] += 1;
+            C[i][(c[1]>0) + (c[2]>0) *2] += 1;
+            C[i][(c[2]>0) + (c[3]>0) *2] += 1;
+            C[i][(c[3]>0) + (c[4]>0) *2] += 1;
+            C[i][(c[4]>0) + (c[5]>0) *2] += 1;
+            C[i][(c[5]>0) + (c[6]>0) *2] += 1;
+            C[i][(c[6]>0) + (c[7]>0) *2] += 1;
+
+        }
 
     }
-    std::cout << "Printing C\n 00 01 10 11\n -----------\n";
-    for(auto & i : C) {
-        for (int j : i) {
-            std::cout << j << ' ';
-        }
+    std::cout << "Printing C (AVX)\n 00 01 10 11\n -----------\n";
+    for(auto & bitPairs : C) {
+        for(auto & pairCount:bitPairs) { std::cout << pairCount << ' '; }
         std::cout <<'\n';
     }
 }
