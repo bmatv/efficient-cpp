@@ -80,38 +80,10 @@ float genRandFloat(){
 
 void BM_bitpaircount_vec_float_AVX(benchmark::State& state){
 
-    int maskArray[32][8]{{1,    1,    1,    1,    1,    1,    1,    1,},
-                         {2,    2,    2,    2,    2,    2,    2,    2,},
-                         {4,    4,    4,    4,    4,    4,    4,    4,},
-                         {8,    8,    8,    8,    8,    8,    8,    8,},
-                         {16,   16,   16,   16,   16,   16,   16,   16,},
-                         {32,   32,   32,   32,   32,   32,   32,   32,},
-                         {64,   64,   64,   64,   64,   64,   64,   64,},
-                         {128,  128,  128,  128,  128,  128,  128,  128,},
-                         {256,  256,  256,  256,  256,  256,  256,  256,},
-                         {512,  512,  512,  512,  512,  512,  512,  512,},
-                         {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,},
-                         {2048,2048,2048,2048,2048,2048,2048,2048,},
-                         {4096,4096,4096,4096,4096,4096,4096,4096,},
-                         {8192,8192,8192,8192,8192,8192,8192,8192,},
-                         {16384,16384,16384,16384,16384,16384,16384,16384,},
-                         {32768,32768,32768,32768,32768,32768,32768,32768,},
-                         {65536,65536,65536,65536,65536,65536,65536,65536,},
-                         {131072,131072,131072,131072,131072,131072,131072,131072,},
-                         {262144,262144,262144,262144,262144,262144,262144,262144,},
-                         {524288,524288,524288,524288,524288,524288,524288,524288,},
-                         {1048576,1048576,1048576,1048576,1048576,1048576,1048576,1048576,},
-                         {2097152,2097152,2097152,2097152,2097152,2097152,2097152,2097152,},
-                         {4194304,4194304,4194304,4194304,4194304,4194304,4194304,4194304,},
-                         {8388608,8388608,8388608,8388608,8388608,8388608,8388608,8388608,},
-                         {16777216,16777216,16777216,16777216,16777216,16777216,16777216,16777216,},
-                         {33554432,33554432,33554432,33554432,33554432,33554432,33554432,33554432,},
-                         {67108864,67108864,67108864,67108864,67108864,67108864,67108864,67108864,},
-                         {134217728,134217728,134217728,134217728,134217728,134217728,134217728,134217728,},
-                         {268435456,268435456,268435456,268435456,268435456,268435456,268435456,268435456,},
-                         {536870912,536870912,536870912,536870912,536870912,536870912,536870912,536870912,},
-                         {1073741824,1073741824,1073741824,1073741824,1073741824,1073741824,1073741824,1073741824,},
-                         {-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,-2147483648,},};
+    int mask[32] = {1, 2, 4, 8, 16, 32, 64, 128,
+                    256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
+                    65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608,
+                    16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, -2147483648};
 
     std::vector<float>a(1000);
     std::generate(a.begin(), a.end(), genRandFloat);
@@ -125,18 +97,28 @@ void BM_bitpaircount_vec_float_AVX(benchmark::State& state){
             __m256 a8 = _mm256_loadu_ps(&a[j - 1]);
             for (int i = 0; i < 32; ++i) {
 
-                __m256i b8 = _mm256_loadu_si256((__m256i *) maskArray[i]); // masks
-                __m256i c8 = _mm256_castps_si256(_mm256_and_ps(a8, _mm256_castsi256_ps(b8)));
+                __m256i b8 = _mm256_set1_epi32(mask[i]);
+                // __m256i _mm256_set1_epi32 (int a) Broadcast 32-bit integer a to all elements of dst. This intrinsic may generate the vpbroadcastd.
 
-                _mm256_storeu_si256((__m256i *) c, c8);
+//            __m256 c8 = _mm256_castps_si256(_mm256_and_ps(a8, _mm256_castsi256_ps(b8)));
+                __m256 c8 = _mm256_and_ps(a8, _mm256_castsi256_ps(b8));
+                // __m256 _mm256_and_ps (__m256 a, __m256 b) Compute the bitwise AND of packed single-precision (32-bit) floating-point elements in a and b, and store the results in dst.
+                // __m256i _mm256_castps_si256 (__m256 a) Cast vector of type __m256 to type __m256i. This intrinsic is only used for compilation and does not generate any instructions, thus it has zero latency.
+                __m256 d8 = _mm256_cmp_ps(c8,_mm256_set1_ps(0),_CMP_GT_OS); // a>b
 
-                C[i][(c[0] > 0) + (c[1] > 0) * 2] += 1; // could be also (c[0]>0) + (c[1]>0)*2
-                C[i][(c[1] > 0) + (c[2] > 0) * 2] += 1;
-                C[i][(c[2] > 0) + (c[3] > 0) * 2] += 1;
-                C[i][(c[3] > 0) + (c[4] > 0) * 2] += 1;
-                C[i][(c[4] > 0) + (c[5] > 0) * 2] += 1;
-                C[i][(c[5] > 0) + (c[6] > 0) * 2] += 1;
-                C[i][(c[6] > 0) + (c[7] > 0) * 2] += 1;
+                __m256 _result = _mm256_and_ps(d8, _mm256_castsi256_ps(_mm256_set1_epi32(1))); // getting 0 and 1 mask with AVX1
+
+                _mm256_storeu_si256((__m256i *) c, _mm256_castps_si256(_result));
+
+
+
+                C[i][c[0] + c[1]*2] ++;
+                C[i][c[1] + c[2]*2] ++;
+                C[i][c[2] + c[3]*2] ++;
+                C[i][c[3] + c[4]*2] ++;
+                C[i][c[4] + c[5]*2] ++;
+                C[i][c[5] + c[6]*2] ++;
+                C[i][c[6] + c[7]*2] ++;
 
             }
         }
@@ -148,14 +130,18 @@ void BM_bitpaircount_vec_float_AVX(benchmark::State& state){
 
 void BM_bitpaircount_vec_float(benchmark::State& state){
 
-    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483, 0.9274405,0.5442584,0.43579006};
+    std::vector<float>vec(1000);
+    std::generate(vec.begin(), vec.end(), genRandFloat);
     size_t total = vec.size()-1;
     const int nbits = sizeof(vec[0]) * 8; // should be 32 and can be unsigned if that makes sense
 //    std::vector<std::vector<int>> C(nbits,std::vector<int>(4,0)); //should be [nbits,4], could be a basic 1D array
     int C[nbits][4]{};
 
-    int maskArray[32]{};
-    for(int i=0; i<32; ++i) {maskArray[i] = (static_cast<int>(1) << i);}
+    int mask[32] = {1, 2, 4, 8, 16, 32, 64, 128,
+                    256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
+                    65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608,
+                    16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, -2147483648};
+
 
     int idxA = 0, idxB = 0;
     int A, B;
@@ -168,8 +154,8 @@ void BM_bitpaircount_vec_float(benchmark::State& state){
         B = reinterpret_cast<int&>(vec[i+1]);
 
         for (int j = 0; j< nbits; ++j){
-            idxA = (A & maskArray[j]) >> j;
-            idxB = (B & maskArray[j]) >> j;
+            idxA = (A & mask[j]) > 0;
+            idxB = (B & mask[j]) > 0;
             C[j][idxA + idxB*2] += 1; // OK but a bit different order which is fine
         }
     }
@@ -178,7 +164,7 @@ void BM_bitpaircount_vec_float(benchmark::State& state){
         benchmark::ClobberMemory();
 
     }
-    state.SetItemsProcessed(state.iterations()*8);
+    state.SetItemsProcessed(state.iterations()*1000);
 }
 
 
