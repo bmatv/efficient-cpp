@@ -75,14 +75,9 @@ int main() {
             _mm256_storeu_si256((__m256i *) c, _mm256_castps_si256(_result));
 
 
-
-            C[i][c[0] + c[1]*2] ++;
-            C[i][c[1] + c[2]*2] ++;
-            C[i][c[2] + c[3]*2] ++;
-            C[i][c[3] + c[4]*2] ++;
-            C[i][c[4] + c[5]*2] ++;
-            C[i][c[5] + c[6]*2] ++;
-            C[i][c[6] + c[7]*2] ++;
+            for(size_t idx_c = 0; idx_c<7;++i){
+            C[i][c[idx_c] + c[idx_c+1]*2] ++; // this index computation could potentially be done with AVX a[0:6] + a[1:7]*2, one value will be thrown away though
+            }
 
         }
 
@@ -93,3 +88,23 @@ int main() {
         std::cout <<'\n';
     }
 }
+
+
+//__m256 _mm256_hadd_ps (__m256 a, __m256 b)
+//Synopsis
+//        __m256 _mm256_hadd_ps (__m256 a, __m256 b)
+//#include <immintrin.h>
+//Instruction: vhaddps ymm, ymm, ymm
+//CPUID Flags: AVX
+//        Description
+//Horizontally add adjacent pairs of single-precision (32-bit) floating-point elements in a and b, and pack the results in dst.
+//Operation
+//        dst[31:0] := a[63:32] + a[31:0]
+//dst[63:32] := a[127:96] + a[95:64]
+//dst[95:64] := b[63:32] + b[31:0]
+//dst[127:96] := b[127:96] + b[95:64]
+//dst[159:128] := a[191:160] + a[159:128]
+//dst[191:160] := a[255:224] + a[223:192]
+//dst[223:192] := b[191:160] + b[159:128]
+//dst[255:224] := b[255:224] + b[223:192]
+//dst[MAX:256] := 0
