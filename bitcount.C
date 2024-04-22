@@ -27,12 +27,12 @@ int main(){
 //    std::vector<float>vec(10);
 //    std::generate(vec.begin(), vec.end(), genRandFloat);
 //    assert(vecA.size() == vecB.size());
-//    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483};
+    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483};
 
     // have to create a long vector with ~1m of values to properly assess the AVX implementation and how to load stuff in chunks
 
-    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584,0.43579006,
-                          0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584};
+//    std::vector<float>vec{0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584,0.43579006,
+//                          0.9274405,0.5442584,0.43579006,0.54717463,0.29385483,0.9274405,0.5442584};
 
 
     std::cout << "sizeof (vec) = " << vec[0] << '\n';
@@ -89,6 +89,9 @@ int main(){
 //    std::vector<double > P(4,0.0);
 
     //for each bit, need to compute P[4]
+
+    double m[nbits] {};
+    double mSum = 0;
     for(int i = 0; i < nbits; ++i){
         for(int j = 0; j < 4; ++j){
             P[i][j] = double(C[i][j]) / total;
@@ -96,13 +99,33 @@ int main(){
         double py[] {P[i][0] + P[i][1],P[i][2] + P[i][3]};
         double px[] {P[i][0] + P[i][2],P[i][1] + P[i][3]};
 
-        double M=0;
+
         for (int ii = 0; ii< 2;++ii){
             for (int jj = 0; jj < 2; ++jj){
                 if (P[i][ii + jj*2] > 0)
-                    M += P[i][ii + jj*2]*log(P[i][ii + jj*2]/px[ii]/py[jj]);
+                    m[i] += P[i][ii + jj * 2] * log(P[i][ii + jj * 2] / px[ii] / py[jj]);
             }
         }
-        std::cout << "M = " << M / log(2) << '\n';
+        m[i] /= log(2);
+        mSum += m[i];
+        std::cout << "M = " << m[i] << '\n';
     }
+    double accumulator = 0;
+
+    int bitsToKeep = 0;
+    for (int i = (nbits - 1); i >=0; --i){ // can't be size_t as size_t(0) - 1 => 0 and the loop never stops
+        if(accumulator < 0.99) {
+            accumulator += m[i]/mSum;
+            bitsToKeep++;
+        }
+        else {
+            continue;
+        }
+//            std::cout << "accumulator value = " << accumulator <<'\n';
+    }
+    std::cout << "ARG value = " << bitsToKeep - 9 << '\n';
+    std::cout << "accumulator value = " << accumulator <<'\n';
+
+    std::cout << "M_sum = " << mSum << '\n';
+
 }
