@@ -343,7 +343,7 @@ void BM_bitpaircount_array1d(benchmark::State& state) {
 
 BENCHMARK(BM_bitpaircount_vec_float)->Arg(1 << 22);
 BENCHMARK(BM_bitpaircount_vec_float_AVX)->Arg(1<<22);
-BENCHMARK(BM_bitpaircount_vec_float_bitshift_AVX)->Arg(1<<22);
+// BENCHMARK(BM_bitpaircount_vec_float_bitshift_AVX)->Arg(1<<22);
 
 //BENCHMARK(BM_reinterp_cast)->Arg(1 << 22);
 //BENCHMARK(BM_reinterp_cast_single)->Arg(1 << 22);
