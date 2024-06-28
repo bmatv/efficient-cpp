@@ -36,6 +36,29 @@ void BM_branch_not_predicted(benchmark::State& state){
     state.SetItemsProcessed(N*state.iterations());
 }
 
+void BM_branch_not_predicted_2(benchmark::State& state){
+    srand(1);
+    unsigned int N = state.range(0);
+    std::vector<int> v1(N), v2(N);
+    std::vector<int>c1(N);
+
+    for(size_t i=0;i<N;++i){
+        v1[i] = rand();
+        v2[i] = rand();
+        c1[i] = rand() & 1; //rightmost bit as value (0 or 1)
+    }
+
+    for (auto _:state){
+        unsigned long a1 = 0;
+        for (size_t i =0;i<N;++i){
+            c1[i]?a1+=v1[i]:a1*=v2[i];
+        }
+    benchmark::DoNotOptimize(a1);
+    benchmark::ClobberMemory();
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
 void BM_branch_predicted(benchmark::State& state){
     srand(1);
     unsigned int N = state.range(0);
@@ -187,8 +210,10 @@ void BM_branch_branchless(benchmark::State& state){
     state.SetItemsProcessed(N*state.iterations());
 }
 
-BENCHMARK(BM_branch_predicted)->Arg(1<<22);
+
 BENCHMARK(BM_branch_not_predicted)->Arg(1<<22);
+BENCHMARK(BM_branch_not_predicted_2)->Arg(1<<22);
+BENCHMARK(BM_branch_predicted)->Arg(1<<22);
 BENCHMARK(BM_branch_switching)->Arg(1<<22);
 BENCHMARK(BM_branch_false)->Arg(1<<22);
 BENCHMARK(BM_branch_keysort)->Arg(1<<22);
