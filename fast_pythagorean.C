@@ -11,15 +11,15 @@ void BM_pythagorean(benchmark::State& state){
     std::vector<int>c1(N);
 
     for(size_t i=0;i<N;++i){
-        v1[i] = rand();
-        v2[i] = rand();
+        v1[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+        v2[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
     }
-    int* p1 = v1.data(), *p2 = v2.data();
-    int* b1 = c1.data();
+    // int* p1 = v1.data(), *p2 = v2.data();
+    // int* b1 = c1.data();
 
     for (auto _:state){
         for (size_t i =0;i<N;++i){
-            b1[i] = sqrt(p1[i]*p1[i] + p2[i]*p2[i]);
+            c1[i] = sqrt(pow(v1[i],2) + pow(v2[i],2));
         }
     benchmark::DoNotOptimize(c1);
     benchmark::ClobberMemory();
@@ -36,8 +36,8 @@ void BM_pythagorean_pow(benchmark::State& state){
     std::vector<int>c1(N);
 
     for(size_t i=0;i<N;++i){
-        v1[i] = rand();
-        v2[i] = rand();
+        v1[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+        v2[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
     }
     // int* p1 = v1.data(), *p2 = v2.data();
     // int* b1 = c1.data();
@@ -53,6 +53,30 @@ void BM_pythagorean_pow(benchmark::State& state){
     // std::cout << "2 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
 }
 
+void BM_pythagorean_2(benchmark::State& state){
+    srand(1);
+    unsigned int N = state.range(0);
+    std::vector<int> v1(N), v2(N);
+    std::vector<int>c1(N);
+
+    for(size_t i=0;i<N;++i){
+        v1[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+        v2[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+    }
+    // int* p1 = v1.data(), *p2 = v2.data();
+    // int* b1 = c1.data();
+
+    for (auto _:state){
+        for (size_t i =0;i<N;++i){
+            c1[i] = hypot(v1[i],v2[i]);
+        }
+    benchmark::DoNotOptimize(c1);
+    benchmark::ClobberMemory();
+    }
+    state.SetItemsProcessed(N*state.iterations());
+    // std::cout << "2.1 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
+}
+
 
 void BM_fast_pythagorean(benchmark::State& state){
     // https://en.wikipedia.org/wiki/Alpha_max_plus_beta_min_algorithm
@@ -65,8 +89,8 @@ void BM_fast_pythagorean(benchmark::State& state){
     auto beta0  = 2*sin(M_PI/8) / (1+cos(M_PI/8));
 
     for(size_t i=0;i<N;++i){
-        v1[i] = rand();
-        v2[i] = rand();
+        v1[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+        v2[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
     }
     int* p1 = v1.data(), *p2 = v2.data();
     int* b1 = c1.data();
@@ -95,8 +119,8 @@ void BM_fast_pythagorean_2(benchmark::State& state){
     auto beta0  = 2*sin(M_PI/8) / (1+cos(M_PI/8));
 
     for(size_t i=0;i<N;++i){
-        v1[i] = rand();
-        v2[i] = rand();
+        v1[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+        v2[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
     }
 
     for (auto _:state){
@@ -122,15 +146,15 @@ void BM_fast_pythagorean_3(benchmark::State& state){
     auto beta0  = 2*sin(M_PI/8) / (1+cos(M_PI/8));
 
     for(size_t i=0;i<N;++i){
-        v1[i] = rand();
-        v2[i] = rand();
+        v1[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+        v2[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
     }
     int* p1 = v1.data(), *p2 = v2.data();
     int* b1 = c1.data();
 
     for (auto _:state){
         for (size_t i =0;i<N;++i){
-            auto[vmax,vmin] = std::minmax(p1[i],p2[i]);
+            auto[vmin,vmax] = std::minmax(p1[i],p2[i]);
             b1[i] = alpha0*vmax + beta0*vmin;
         }
     benchmark::DoNotOptimize(c1);
@@ -151,8 +175,8 @@ void BM_fast_pythagorean_4(benchmark::State& state){
     auto beta0  = 2*sin(M_PI/8) / (1+cos(M_PI/8));
 
     for(size_t i=0;i<N;++i){
-        v1[i] = rand();
-        v2[i] = rand();
+        v1[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
+        v2[i] = static_cast<double>(rand())/ RAND_MAX * 5000;
     }
     int* p1 = v1.data(), *p2 = v2.data();
 
@@ -167,10 +191,11 @@ void BM_fast_pythagorean_4(benchmark::State& state){
     benchmark::ClobberMemory();
     }
     state.SetItemsProcessed(N*state.iterations());
-    std::cout << "6 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
+    // std::cout << "6 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
 }
 
 BENCHMARK(BM_pythagorean)->Arg(1<<22);
+BENCHMARK(BM_pythagorean_2)->Arg(1<<22);
 BENCHMARK(BM_pythagorean_pow)->Arg(1<<22);
 
 BENCHMARK(BM_fast_pythagorean)->Arg(1<<22);
