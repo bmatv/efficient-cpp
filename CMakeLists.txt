@@ -55,3 +55,6 @@ add_executable(bitcount_avx bitcount_avx.cpp)
 
 add_executable(fast_pythagorean fast_pythagorean.C)
 target_link_libraries(fast_pythagorean benchmark::benchmark)
+
+add_executable(BM_sqrt_pow BM_sqrt_pow.C)
+target_link_libraries(BM_sqrt_pow benchmark::benchmark)
