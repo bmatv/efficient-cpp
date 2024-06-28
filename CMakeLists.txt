@@ -52,3 +52,6 @@ add_executable(bitcount_BM bitcount_BM.cpp libbitcount.C)
 target_link_libraries(bitcount_BM benchmark::benchmark)
 add_executable(reinterp reinterp.cpp)
 add_executable(bitcount_avx bitcount_avx.cpp)
+
+add_executable(fast_pythagorean fast_pythagorean.C)
+target_link_libraries(fast_pythagorean benchmark::benchmark)
