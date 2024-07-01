@@ -5,6 +5,17 @@
 #include <iostream>
 #include "fast_pythagorean.h"
 
+
+void genRandIntArrays(unsigned int N, std::vector<int> &v1, std::vector<int> &v2)
+{
+    const unsigned int M = 5000;
+    for (size_t i = 0; i < N; ++i)
+    {
+        v1[i] = static_cast<int>(static_cast<float>(rand()) / RAND_MAX * M);
+        v2[i] = static_cast<int>(static_cast<float>(rand()) / RAND_MAX * M);
+    }
+}
+
 void BM_pythagorean(benchmark::State& state){
     srand(1); 
     unsigned int N = state.range(0);
@@ -16,8 +27,7 @@ void BM_pythagorean(benchmark::State& state){
     for (auto _:state){
         for (size_t i =0;i<N;++i){
             c1[i] = static_cast<int>(std::sqrt(
-                std::pow(static_cast<float>(v1[i]),2.0F)
-                + std::pow(static_cast<float>(v2[i]),2.0F)));
+                static_cast<float>(v1[i]*v1[i] + v2[i]*v2[i])));
         }
     benchmark::DoNotOptimize(c1);
     benchmark::ClobberMemory();
@@ -46,15 +56,7 @@ void BM_pythagorean_float(benchmark::State& state){
     // std::cout << "1 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
 }
 
-void genRandIntArrays(unsigned int N, std::vector<int> &v1, std::vector<int> &v2)
-{
-    const unsigned int M = 5000;
-    for (size_t i = 0; i < N; ++i)
-    {
-        v1[i] = static_cast<int>(static_cast<float>(rand()) / RAND_MAX * M);
-        v2[i] = static_cast<int>(static_cast<float>(rand()) / RAND_MAX * M);
-    }
-}
+
 void BM_pythagorean_pow(benchmark::State &state)
 {
     srand(1);
