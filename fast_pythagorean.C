@@ -15,6 +15,7 @@ void genRandIntArrays(unsigned int N, std::vector<int> &v1, std::vector<int> &v2
     }
 }
 
+
 void BM_pythagorean(benchmark::State &state)
 {
     srand(1);
@@ -38,7 +39,7 @@ void BM_pythagorean(benchmark::State &state)
     // std::cout << "1 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
 }
 
-void BM_pythagorean_float(benchmark::State &state)
+void BM_pythagorean_no_cast(benchmark::State &state)
 {
     srand(1);
     unsigned int N = state.range(0);
@@ -51,7 +52,7 @@ void BM_pythagorean_float(benchmark::State &state)
     {
         for (size_t i = 0; i < N; ++i)
         {
-            c1[i] = std::sqrt(std::pow((float)(v1[i]), 2.0F) + std::pow((float)(v2[i]), 2.0F));
+            c1[i] = std::sqrt(std::pow((v1[i]), 2.0F) + std::pow((v2[i]), 2.0F));
         }
         benchmark::DoNotOptimize(c1);
         benchmark::ClobberMemory();
@@ -60,7 +61,9 @@ void BM_pythagorean_float(benchmark::State &state)
     // std::cout << "1 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
 }
 
-void BM_pythagorean_pow(benchmark::State &state)
+/// @brief can get as fast as sqrt implementation with -ffast-math, otherwise is 10 times slower
+/// @param state 
+void BM_pythagorean_powsqrt(benchmark::State &state)
 {
     srand(1);
     unsigned int N = state.range(0);
@@ -82,7 +85,9 @@ void BM_pythagorean_pow(benchmark::State &state)
     // std::cout << "2 " << c1[0] << ' ' << v1[0] <<' ' <<v2[0] << '\n';
 }
 
-void BM_pythagorean_2(benchmark::State &state)
+/// @brief is the fastest if int explicitly casted to float, otherwise is very slow
+/// @param state 
+void BM_pythagorean_hypot_float(benchmark::State &state)
 {
     srand(1);
     unsigned int N = state.range(0);
@@ -95,7 +100,7 @@ void BM_pythagorean_2(benchmark::State &state)
     {
         for (size_t i = 0; i < N; ++i)
         {
-            c1[i] = hypot(v1[i], v2[i]);
+            c1[i] = static_cast<int>(std::hypot((float)(v1[i]), (float)(v2[i])));
         }
         benchmark::DoNotOptimize(c1);
         benchmark::ClobberMemory();
@@ -237,10 +242,10 @@ void BM_fast_pythagorean_4(benchmark::State &state)
 }
 
 BENCHMARK(BM_pythagorean)->Arg(1 << 22);
-BENCHMARK(BM_pythagorean_float)->Arg(1 << 22);
+BENCHMARK(BM_pythagorean_no_cast)->Arg(1 << 22);
 
-BENCHMARK(BM_pythagorean_2)->Arg(1 << 22);
-BENCHMARK(BM_pythagorean_pow)->Arg(1 << 22);
+BENCHMARK(BM_pythagorean_hypot_float)->Arg(1 << 22);
+BENCHMARK(BM_pythagorean_powsqrt)->Arg(1 << 22);
 
 BENCHMARK(BM_fast_pythagorean)->Arg(1 << 22);
 BENCHMARK(BM_fast_pythagorean_2)->Arg(1 << 22);
