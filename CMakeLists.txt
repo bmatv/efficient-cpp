@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 
-set(CMAKE_CXX_FLAGS "-g -O3 -march=native -Wall -pedantic -pthread") # ivybridge
+set(CMAKE_CXX_FLAGS "-g -O3 -march=native -Wall -pedantic -pthread -mavx2 -m64") # ivybridge -ffast-math
 
 #set(CMAKE_CXX_FLAGS_DEBUG "-g")
 #set(CMAKE_CXX_FLAGS_RELEASE "-O3 -mavx2 -Wall -pedantic")
@@ -58,3 +58,6 @@ target_link_libraries(fast_pythagorean benchmark::benchmark)
 
 add_executable(BM_sqrt_pow BM_sqrt_pow.C)
 target_link_libraries(BM_sqrt_pow benchmark::benchmark)
+
+add_executable(pythagorean_avx fast_pythagorean_avx.C)
+target_link_libraries(pythagorean_avx benchmark::benchmark)
