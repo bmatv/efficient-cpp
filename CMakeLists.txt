@@ -61,3 +61,5 @@ target_link_libraries(BM_sqrt_pow benchmark::benchmark)
 
 add_executable(pythagorean_avx fast_pythagorean_avx.C)
 target_link_libraries(pythagorean_avx benchmark::benchmark)
+
+add_executable(01_cast design-patterns/01_cast.C)
