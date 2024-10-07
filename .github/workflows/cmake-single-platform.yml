@@ -21,23 +21,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libbenchmark-dev
+        version: 1.0
     - name: What's linux
       run: cat /etc/os-release
-    - name: What's the cwd
-      run: pwd
-    - name: Directory listing
-      run: ls -la
-    - name: install packages
-      run: sudo apt update && sudo apt install libbenchmark-dev cmake -y
     - name: Configure CMake
       
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B build/
+      run: cmake -B ${{github.workspace}}/build
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build build/
+      run: cmake --build ${{github.workspace}}/build -j
 
     # - name: Test
     #   working-directory: ${{github.workspace}}/build
