@@ -18,12 +18,8 @@ public:
   ~Eagle() {};
 };
 
-void use() {
-  std::unique_ptr<FlyingBird> p = std::make_unique<Eagle>();
-  // ...
-} // p's destruction calls ~Base(), not ~D(), which leaks D::s and possibly more
-
-// int main() {
-//     std::unique_ptr<FlyingBird> p = std::make_unique<Eagle>();
-//     // p->fly();
-// }
+int main() {
+    std::unique_ptr<FlyingBird> p = std::make_unique<Eagle>();
+    // p->fly();
+    // p's destruction calls ~Base(), not ~D(), which leaks D::s and possibly more
+}
