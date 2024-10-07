@@ -1,0 +1,44 @@
+---
+BasedOnStyle: Google
+
+ColumnLimit: 100
+ReflowComments: true # might want to switch off for the older files
+SortIncludes = Never
+
+Language: Cpp
+# Force pointers to the type for C++.
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments: false
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 3
+
+AllowShortFunctionsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+IndentWidth: 4
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+
+AlwaysBreakTemplateDeclarations: MultiLine
+
+# IncludeBlocks:   Regroup
+# IncludeCategories:
+#   - Regex:           '^"[^\/]*\.h"'
+#     Priority:        0
+#     SortPriority:    0
+#     CaseSensitive:   false
+#   - Regex:           '^<[^\/\.]*>'
+#     Priority:        1
+#     SortPriority:    0
+#     CaseSensitive:   false
+#   - Regex:           '^<.*'
+#     Priority:        2
+#     SortPriority:    0
+#     CaseSensitive:   false
+#   - Regex:           '.*'
+#     Priority:        3
+#     SortPriority:    0
+#     CaseSensitive:   false
