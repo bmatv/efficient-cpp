@@ -61,3 +61,4 @@ target_link_libraries(pythagorean_avx benchmark::benchmark)
 
 add_executable(01_cast design-patterns/01_cast.C)
 add_executable(flying_bird design-patterns/flying_bird.cpp)
+add_executable(repeating_series repeating_series.C)
