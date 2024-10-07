@@ -7,8 +7,6 @@ set(CMAKE_CXX_STANDARD 20)
 #    set(CMAKE_BUILD_TYPE Release)
 #endif()
 
-
-
 set(CMAKE_CXX_FLAGS "-g -O3 -march=native -Wall -pedantic -pthread -mavx2 -m64") # ivybridge -ffast-math
 
 #set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -36,7 +34,6 @@ target_link_libraries(clamp_test benchmark::benchmark)
 add_executable(avx_test avx_test.cpp)
 add_executable(find_sum_elements find_sum_elements.cpp)
 add_executable(rational rational.cpp)
-add_executable(flying_bird flying_bird.cpp)
 
 add_executable(dynamic_cast 02_dynamic_cast.C)
 target_link_libraries(dynamic_cast benchmark::benchmark)
@@ -63,3 +60,4 @@ add_executable(pythagorean_avx fast_pythagorean_avx.C)
 target_link_libraries(pythagorean_avx benchmark::benchmark)
 
 add_executable(01_cast design-patterns/01_cast.C)
+add_executable(flying_bird design-patterns/flying_bird.cpp)
