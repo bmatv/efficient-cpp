@@ -39,7 +39,7 @@ if (CMAKE_CXX_COMPILER_TARGET MATCHES "x86_64" OR CMAKE_SYSTEM_PROCESSOR MATCHES
 
     add_executable(avx_test avx_test.cpp) # effectively an SSE example and needs to renamed
     add_executable(bitcount_avx bitcount_avx.cpp) # AVX1 example, no AVX2 is used
-    target_compiler_options(bitcount_avx PRIVATE -mavx)
+    target_compile_options(bitcount_avx PRIVATE -mavx)
 
     add_executable(pythagorean_avx fast_pythagorean_avx.C)
     target_link_libraries(pythagorean_avx benchmark::benchmark)
