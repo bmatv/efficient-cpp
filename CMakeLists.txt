@@ -29,10 +29,10 @@ endif()
 add_executable(superscalar 01_superscalar.C)
 
 add_executable(branches branches.cpp)
-
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+message("CHECKING if x86 CPU TARGET")
+message("CMAKE_CXX_COMPILER_TARGET IS ${CMAKE_CXX_COMPILER_TARGET}")
+if (CMAKE_CXX_COMPILER_TARGET MATCHES "x86_64")
+    message("x86 CPU TARGET FOUND. ENABLING EXTRA EXECUTABLES")
     add_executable(clamp_test branch_clamp.cpp) # use of x86 only header so does not build on ARM, how to turn it off in cmake if ARM detected? Or better yet, howe to build it only for x86 arch
     target_link_libraries(clamp_test benchmark::benchmark)
 
