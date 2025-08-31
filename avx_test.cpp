@@ -29,7 +29,7 @@ int main(){
 //    __m256i bound = _mm256_cvtepi8_epi16()
     __m128i vec = _mm_setr_epi8(v1[0],v1[1],v1[2],v1[3],v1[4],v1[5],v1[6],v1[7],v1[8],v1[9],v1[10],v1[11],v1[12],v1[13],v1[14],v1[15]);
 //    int b = _mm_extract_epi8(vec,1);
-    __m128i scalar = _mm_set1_epi8(128);
+    __m128i scalar = _mm_set1_epi8(127);
     __m128i vec_out = _mm_min_epi8(vec,scalar);
 
     std::cout << _mm_extract_epi8(vec,0)<< ' ' <<_mm_extract_epi8(vec,1) << ' ' <<_mm_extract_epi8(vec,2) <<' ' <<_mm_extract_epi8(vec,3) << ' '
