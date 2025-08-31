@@ -39,6 +39,8 @@ if (CMAKE_CXX_COMPILER_TARGET MATCHES "x86_64" OR CMAKE_SYSTEM_PROCESSOR MATCHES
     target_link_libraries(clamp_test benchmark::benchmark)
 
     add_executable(avx_test avx_test.cpp) # effectively an SSE example and needs to renamed
+    target_compile_options(avx_test PRIVATE -msse4.1) # could also enable -mavx which would cascade enable all SSE
+
     add_executable(bitcount_avx bitcount_avx.cpp) # AVX1 example, no AVX2 is used
     target_compile_options(bitcount_avx PRIVATE -mavx)
 
