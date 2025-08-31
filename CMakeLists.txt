@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(benchmark REQUIRED)
 # set(CMAKE_CXX_FLAGS "-g -O3 -march=native -Wall -pedantic -pthread -std=c++20") # ivybridge -ffast-math
-set(CMAKE_CXX_FLAGS "-g -O3 -target x86-64 -mcpu=skylake -pedantic")
+set(CMAKE_CXX_FLAGS "-g -O3 -pedantic")
 
 #set(CMAKE_CXX_FLAGS_DEBUG "-g")
 #set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -pedantic")
