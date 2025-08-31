@@ -34,12 +34,12 @@ message("CMAKE_CXX_COMPILER_TARGET IS ${CMAKE_CXX_COMPILER_TARGET}")
 message("CMAKE_SYSTEM_PROCESSOR IS ${CMAKE_SYSTEM_PROCESSOR}")
 if (CMAKE_CXX_COMPILER_TARGET MATCHES "x86_64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
     message("x86 CPU TARGET FOUND. ENABLING EXTRA EXECUTABLES AND AVX")
-    set(CMAKE_CXX_FLAGS "-avx")
     add_executable(clamp_test branch_clamp.cpp) # use of x86 only header so does not build on ARM, how to turn it off in cmake if ARM detected? Or better yet, howe to build it only for x86 arch
     target_link_libraries(clamp_test benchmark::benchmark)
 
-    add_executable(avx_test avx_test.cpp)
-    add_executable(bitcount_avx bitcount_avx.cpp)
+    add_executable(avx_test avx_test.cpp) # effectively an SSE example and needs to renamed
+    add_executable(bitcount_avx bitcount_avx.cpp) # AVX1 example, no AVX2 is used
+    target_compiler_options(bitcount_avx PRIVATE -mavx)
 
     add_executable(pythagorean_avx fast_pythagorean_avx.C)
     target_link_libraries(pythagorean_avx benchmark::benchmark)
