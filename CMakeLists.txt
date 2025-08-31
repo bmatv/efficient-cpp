@@ -50,6 +50,7 @@ if (CMAKE_CXX_COMPILER_TARGET MATCHES "x86_64" OR CMAKE_SYSTEM_PROCESSOR MATCHES
     add_executable(bitcount bitcount.C libbitcount.C libbitcount.h)
 
     add_executable(bitcount_BM bitcount_BM.cpp libbitcount.C)
+    target_compile_options(bitcount_BM PRIVATE -mavx)
     target_link_libraries(bitcount_BM benchmark::benchmark)
 endif()
 
