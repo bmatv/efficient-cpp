@@ -1,5 +1,6 @@
 //
 // Created by bogdan on 1/12/23.
+// This is an SSE example using __m128* intrinsics and doesn't require -mavx or -mavx2 flags
 //
 #include <random>
 //#include <avx2intrin.h>

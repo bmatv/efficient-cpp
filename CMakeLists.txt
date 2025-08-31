@@ -33,7 +33,8 @@ message("CHECKING if x86 CPU TARGET")
 message("CMAKE_CXX_COMPILER_TARGET IS ${CMAKE_CXX_COMPILER_TARGET}")
 message("CMAKE_SYSTEM_PROCESSOR IS ${CMAKE_SYSTEM_PROCESSOR}")
 if (CMAKE_CXX_COMPILER_TARGET MATCHES "x86_64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-    message("x86 CPU TARGET FOUND. ENABLING EXTRA EXECUTABLES")
+    message("x86 CPU TARGET FOUND. ENABLING EXTRA EXECUTABLES AND AVX")
+    set(CMAKE_CXX_FLAGS "-avx")
     add_executable(clamp_test branch_clamp.cpp) # use of x86 only header so does not build on ARM, how to turn it off in cmake if ARM detected? Or better yet, howe to build it only for x86 arch
     target_link_libraries(clamp_test benchmark::benchmark)
 
