@@ -30,6 +30,7 @@ jobs:
             libopenmpi-dev
             libboost-mpi-dev
           version: 1.0
+          execute_install_scripts: true
       - name: What's linux
         run: cat /etc/os-release
       - name: Configure CMake
