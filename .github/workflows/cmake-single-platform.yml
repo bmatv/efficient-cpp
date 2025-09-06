@@ -34,7 +34,8 @@ jobs:
             libpsm-infinipath1 libpsm2-2 librdmacm1t64 libucx0 libxnvctrl0
             ocl-icd-libopencl1 openmpi-common
           version: 1.0
-          execute_install_scripts: true
+      - name: Install MPI to get mpicc/mpirun
+        run: sudo apt install openmpi-bin -y --no-download
       - name: What's linux
         run: cat /etc/os-release
       - name: Configure CMake
