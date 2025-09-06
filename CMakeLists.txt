@@ -87,11 +87,7 @@ add_executable(struct_init struct_init.C)
 
 add_executable(simde_avx512_add simde_sandbox/avx512_add.cpp)
 # Find SIMDe headers
-find_path(SIMDE_INCLUDE_DIR simde/x86/avx512.h)
-
-if(NOT SIMDE_INCLUDE_DIR)
-    message(FATAL_ERROR "SIMDe not found!")
-endif()
+find_path(SIMDE_INCLUDE_DIR simde/x86/avx512.h REQUIRED)
 
 target_include_directories(simde_avx512_add PRIVATE ${SIMDE_INCLUDE_DIR})
 target_compile_options(simde_avx512_add PRIVATE -march=native)
