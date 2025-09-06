@@ -90,8 +90,11 @@ add_executable(simde_avx512_add simde_sandbox/avx512_add.cpp)
 find_path(SIMDE_INCLUDE_DIR simde/x86/avx512.h REQUIRED)
 
 target_include_directories(simde_avx512_add PRIVATE ${SIMDE_INCLUDE_DIR})
-target_compile_options(simde_avx512_add PRIVATE -march=native)
-# avx512 example needs either avx flag or march=native not to produce alignment warning and perform in general
+target_compile_options(simde_avx512_add PRIVATE -march=native -Wno-psabi)
+# avx512 example needs either -mavx512f flag or march=native, if hardware supports avx512. If not, the below warnings are expected:
+# clang produces: `warning: AVX vector argument of type 'simde__m512' (aka '__m512') without 'avx512f' enabled changes the ABI [-Wpsabi]`
+# gcc produces: `warning: AVX512F vector return without AVX512F enabled changes the ABI [-Wpsabi]`
+# could be silenced with -Wno-psabi
 
 find_package(Boost_mpi REQUIRED)
 add_executable(mpi_example mpi/mpi.cpp)
