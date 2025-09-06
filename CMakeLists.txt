@@ -92,3 +92,7 @@ find_path(SIMDE_INCLUDE_DIR simde/x86/avx512.h REQUIRED)
 target_include_directories(simde_avx512_add PRIVATE ${SIMDE_INCLUDE_DIR})
 target_compile_options(simde_avx512_add PRIVATE -march=native)
 # avx512 example needs either avx flag or march=native not to produce alignment warning and perform in general
+
+find_package(Boost_mpi REQUIRED)
+add_executable(mpi_example mpi/mpi.cpp)
+target_link_libraries(mpi_example Boost::mpi)
