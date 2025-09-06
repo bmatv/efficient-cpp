@@ -35,7 +35,7 @@ jobs:
             ocl-icd-libopencl1 openmpi-common
           version: 1.0
       - name: Install MPI to get mpicc/mpirun
-        run: sudo apt install openmpi-bin -y --no-download
+        run: sudo apt install openmpi-bin -y --no-download --no-install-recommends
       - name: What's linux
         run: cat /etc/os-release
       - name: Configure CMake
