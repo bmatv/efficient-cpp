@@ -32,7 +32,7 @@ jobs:
           version: 1.0
           execute_install_scripts: true
       - name: Install MPI
-        run: apt-get install openmpi-bin
+        run: sudo apt-get install openmpi-bin
       - name: What's linux
         run: cat /etc/os-release
       - name: Configure CMake
