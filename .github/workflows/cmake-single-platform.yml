@@ -26,6 +26,7 @@ jobs:
           packages: |
             libbenchmark-dev
             libsimde-dev
+            libboost-mpi-dev
           version: 1.0
       - name: What's linux
         run: cat /etc/os-release
