@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: What's linux
+        run: cat /etc/os-release
       - uses: actions/checkout@v4
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -39,8 +41,6 @@ jobs:
           sudo ln -sf /usr/bin/opal_wrapper /usr/bin/mpicc
           sudo ln -sf /usr/bin/opal_wrapper /usr/bin/mpicxx
           sudo ln -sf /usr/bin/opal_wrapper /usr/bin/mpic++
-      - name: What's linux
-        run: cat /etc/os-release
       - name: Configure CMake
 
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
