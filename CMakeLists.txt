@@ -91,6 +91,7 @@ find_path(SIMDE_INCLUDE_DIR simde/x86/avx512.h REQUIRED)
 
 target_include_directories(simde_avx512_add PRIVATE ${SIMDE_INCLUDE_DIR})
 target_compile_options(simde_avx512_add PRIVATE -march=native -Wno-psabi)
+target_link_libraries(simde_avx512_add benchmark::benchmark)
 # avx512 example needs either -mavx512f flag or march=native, if hardware supports avx512. If not, the below warnings are expected:
 # clang produces: `warning: AVX vector argument of type 'simde__m512' (aka '__m512') without 'avx512f' enabled changes the ABI [-Wpsabi]`
 # gcc produces: `warning: AVX512F vector return without AVX512F enabled changes the ABI [-Wpsabi]`
